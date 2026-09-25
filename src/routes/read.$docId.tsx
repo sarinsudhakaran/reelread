@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../lib/auth-context'
 import { useSettings } from '../lib/settings-context'
@@ -169,7 +169,22 @@ function ReaderPage() {
   const handleSlideChange = (delta: number) => {
     const newSlide = Math.max(0, Math.min(currentSlide + delta, slides.length - 1))
     setCurrentSlide(newSlide)
+    containerRef.current?.scrollTo({
+      top: newSlide * containerRef.current.clientHeight,
+      behavior: 'smooth',
+    })
     navigator.vibrate?.(50)
+  }
+
+  const handleScroll = () => {
+    const container = containerRef.current
+    if (!container) return
+
+    const slideHeight = container.clientHeight
+    if (!slideHeight) return
+
+    const nextSlide = Math.round(container.scrollTop / slideHeight)
+    setCurrentSlide(Math.max(0, Math.min(nextSlide, slides.length - 1)))
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -224,6 +239,16 @@ function ReaderPage() {
     toggleUI()
   }, [])
 
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container || !slides.length) return
+
+    container.scrollTo({
+      top: currentSlide * container.clientHeight,
+      behavior: 'auto',
+    })
+  }, [slides.length])
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -248,11 +273,22 @@ function ReaderPage() {
     )
   }
 
+  const readerTheme = settings?.theme || 'dark'
+  const readerBackground = {
+    dark: '#0E0E10',
+    light: '#F2F2F0',
+    sepia: '#F4EAD5',
+    solarized: '#FDF6E3',
+    'high-contrast': '#000000',
+  }[readerTheme] || '#0E0E10'
+
   return (
     <div
       ref={containerRef}
-      className="h-[100dvh] w-full overflow-y-scroll snap-y snap-mandatory bg-[#0E0E10]"
+      className="h-[100dvh] w-full overflow-y-auto snap-y snap-mandatory touch-pan-y"
       onClick={handleContainerTap}
+      onScroll={handleScroll}
+      style={{ backgroundColor: readerBackground }}
     >
       <style>{`
         .snap-slide { scroll-snap-stop: always; scroll-snap-align: start; }

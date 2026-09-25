@@ -27,6 +27,7 @@ export default function ReaderUI({
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
+        onClick={(event) => event.stopPropagation()}
       >
         <button
           onClick={onBack}
@@ -48,6 +49,7 @@ export default function ReaderUI({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
+        onClick={(event) => event.stopPropagation()}
       >
         <button
           onClick={onSettings}

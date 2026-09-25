@@ -124,9 +124,24 @@ export default function SettingsSheet({
 
           {/* Theme */}
           <div>
-            <label className="block text-sm font-semibold mb-3">Theme</label>
+            <label className="block text-sm font-semibold mb-3">Reading Theme</label>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              {(['light', 'dark'] as const).map((theme) => (
+                <button
+                  key={theme}
+                  onClick={() => handleChange('theme', theme)}
+                  className={`px-4 py-3 rounded-lg text-sm font-semibold capitalize transition border ${
+                    settings.theme === theme
+                      ? 'bg-[#F4B860] text-[#0E0E10] border-[#F4B860]'
+                      : 'bg-[#0E0E10] hover:bg-[#0E0E10]/80 border-[#F2F2F0]/20'
+                  }`}
+                >
+                  {theme === 'light' ? 'Light mode' : 'Dark mode'}
+                </button>
+              ))}
+            </div>
             <div className="grid grid-cols-3 gap-2">
-              {(['light', 'dark', 'sepia', 'solarized', 'high-contrast'] as const).map((theme) => (
+              {(['sepia', 'solarized', 'high-contrast'] as const).map((theme) => (
                 <button
                   key={theme}
                   onClick={() => handleChange('theme', theme)}
