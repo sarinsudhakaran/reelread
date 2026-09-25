@@ -1,0 +1,39 @@
+import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { TanStackDevtools } from '@tanstack/react-devtools'
+import { AuthProvider } from '../lib/auth-context'
+import { SettingsProvider } from '../lib/settings-context'
+import appCss from '../styles.css?url'
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: 'utf-8' },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no',
+      },
+      { title: 'Reelread' },
+    ],
+    links: [{ rel: 'stylesheet', href: appCss }],
+  }),
+  shellComponent: RootDocument,
+})
+
+function RootDocument({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <AuthProvider>
+          <SettingsProvider>
+            {children}
+            <Scripts />
+          </SettingsProvider>
+        </AuthProvider>
+        <TanStackDevtools position="bottom-right" plugins={[]} />
+      </body>
+    </html>
+  )
+}
